@@ -3,24 +3,176 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Etch-a-Sketch</title>
+        <title>Calculator</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="styles/style.css">
     </head>
     <body>
-        <div id="header">
-            <input id="resetInput" value="Start" type="button">
-            <input id="randomInput" value="Random" type="button">
+        <div id="display">
+            <label> The output is: </label>
+            <output id="displayOutput" name="myOutput"></output>
         </div>
 
-        <div id = "container" >
+        <div id = "buttons" >
+            <input id="." class="operand" value="." type="button">
+            <input id="0" class="operand" value="0" type="button">
+            <input id="1" class="operand" value="1" type="button">
+            <input id="2" class="operand" value="2" type="button">
+            <input id="3" class="operand" value="3" type="button">
+            <input id="4" class="operand" value="4" type="button">
+            <input id="5" class="operand" value="5" type="button">
+            <input id="6" class="operand" value="6" type="button">
+            <input id="7" class="operand" value="7" type="button">
+            <input id="8" class="operand" value="8" type="button">
+            <input id="9" class="operand" value="9" type="button">
+            <input id="+" class="signOperator" value="+" type="button">
+            <input id="-" class="signOperator" value="-" type="button">
+            <input id="*" class="signOperator" value="x" type="button">
+            <input id="/" class="signOperator" value="/" type="button">
+            <input id="=" class="signOperator" value="=" type="button">
+            <input id="(" class="operator" value="(" type="button">
+            <input id=")" class="operator" value=")" type="button">
+            <input id="Clear" class="operator" value="Clear" type="button">
+            <input id="Back" class="operator" value="Back" type="button">
         </div>
 
-        <div id = "footer">
-            <P>A project by Sasoun Torossian. 2020</P>
-        </div>
+        <script>
+            let expression 
+            let expressionCalc
+            let decimalAllowed = true
+            let signAllowed = false
+            let lastEvent
 
-        <script src="scripts/script.js"></script>
+            let outputID = document.getElementById("displayOutput")
+            let outputText = outputID.textContent
+
+            let operandContainer = document.querySelectorAll(".operand")
+            operandContainer.forEach(operand => {
+                operand.addEventListener('click', (e) => {
+                    if (e.target.id == "." && decimalAllowed) {
+                        outputID.textContent += e.target.value
+                        decimalAllowed = false
+                    } 
+                    else {
+                        outputID.textContent += e.target.value
+                    }    
+
+                    signAllowed = true
+                })
+            })
+
+            let signOperatorContainer = document.querySelectorAll(".signOperator")
+            signOperatorContainer.forEach(signOperator => {
+                signOperator.addEventListener('click', (e) => {
+                    operator = e.target.value
+
+                    if (operator == "=") {
+                        expression = outputID.textContent
+                        expressionCalc = operate(expression)
+                        if (expressionCalc == "Infinity") outputID.textContent = "Not gonna happen"
+                        console.log(expression)
+                        console.log(operate(expression))
+                    }
+                    else if (signAllowed){
+                        outputID.textContent += e.target.value
+                    }
+
+                    decimalAllowed = true
+                    signAllowed = false
+
+                })
+            })
+
+            let operatorContainer = document.querySelectorAll(".operator")
+                operatorContainer.forEach(operator => {
+                    operator.addEventListener('click', (e) => {
+                        operator = e.target.value
+
+                        if (operator == "Back") {
+                            console.log(outputID.textContent)
+                            outputID.textContent = outputID.textContent.slice(0, -1)
+                            console.log(outputID.textContent.slice(-1))
+                            if (outputID.textContent.slice(-1) == "+" || 
+                                outputID.textContent.slice(-1) == "-" || 
+                                outputID.textContent.slice(-1) == "x" ||
+                                outputID.textContent.slice(-1) == "/") {
+                                    signAllowed = false
+                                }
+                            else {
+                                signAllowed = true
+                            }
+                            
+                        }
+                        else if (operator == "Clear") {
+                            outputID.textContent = ""
+                            signAllowed = false
+                        }
+                        else {
+                            outputID.textContent += operator
+                        }
+
+                        decimalAllowed = true
+                    })
+                })
+
+
+
+
+
+            // let operatorContainer = document.querySelectorAll("input")
+
+            // let inputContainer = document.querySelectorAll("input")
+            // inputContainer.forEach(input => {
+            //     input.addEventListener('click', (e) => {
+            //         if (e.target.classList.value == "operand") {
+            //             if (e.target.id == ".") {
+            //                 if (decimalAllowed) {
+            //                     outputID.textContent += e.target.value
+            //                     decimalAllowed = false
+            //                 }
+            //             } 
+            //             else {
+            //                 outputID.textContent += e.target.value
+            //             }
+            //         }
+            //         else if (e.target.classList.value == "operator"){
+            //             decimalAllowed = true
+            //             operator = e.target.value
+
+            //             // if (lastEvent.target.classList.value == "operator") return
+            //             if (operator == "Back") {
+            //                 outputID.textContent = outputID.textContent.slice(0, -1)
+            //             }
+            //             else if (operator == "Clear") {
+            //                 console.log("clear")
+            //                 outputID.textContent = ""
+            //                 expression = null
+            //             }
+            //             else if(operator == "=") {
+            //                 expression = outputID.textContent
+            //                 console.log(expression)
+            //                 if (operate(expression) == "Infinity") {
+            //                     outputID.textContent = "Trying to destroy the universe?"
+            //                 }
+            //                 console.log(operate(expression))
+            //             }
+            //             else {
+            //                 outputID.textContent += e.target.value
+            //             }
+            //         }
+            //         else 
+            //         {
+            //             return
+            //         }
+            //         lastEvent = e
+            //     })
+            // })
+
+            function operate(string) {
+                let str = string.replace(/x/g, '*')
+                return Function(`'use strict'; return (${str})`)()
+            }
+        </script>
     </body>
 </html>
