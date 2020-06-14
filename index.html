@@ -39,7 +39,9 @@
 
         <script>
             let decimalAllowed = true // To check if decimal can be places
+            let bracketOpened = 0 // Track how many brackets have been opened
             let outputID = document.getElementById("displayOutput") // Output handle
+            outputID.textContent = ""
 
             // Event handler for numeric operands 0-9
             let operandContainer = document.querySelectorAll(".operand")
@@ -49,6 +51,7 @@
 
                     if(operand != "." || decimalAllowed) {
                         if (operand == ".") decimalAllowed = false
+                        
                         outputID.textContent += operand
                     }  
                 })
@@ -78,12 +81,10 @@
                         outputID.textContent = expressionCalc
                     }
                     else {
-                        // Get previous character used
-                        const previousCharacter = outputID.textContent.slice(-1)
                         const signOperators = ['+', '-', 'x', '/']
                         // If previous character is sign or blank, then do not accept sign input. Prevents scenarios such as 4++3 or 8*/2
-                        if (signOperators.indexOf(previousCharacter) == -1 &&
-                            previousCharacter != "") {
+                        if (signOperators.indexOf(getPreviousCharacter()) == -1 &&
+                            getPreviousCharacter() != "") {
                             outputID.textContent += operator
                             decimalAllowed = true
                         }
@@ -97,9 +98,24 @@
                     operator.addEventListener('click', (e) => {
                         operator = e.target.value
 
+                        console.log(bracketOpened)
                         // If back, remove last element from output
                         if (operator == "Back") {
+                            if (getPreviousCharacter() == ")") bracketOpened++
+                            if (getPreviousCharacter() == "(") bracketOpened--
                             outputID.textContent = outputID.textContent.slice(0, -1)
+                        }
+                        // If open bracket, increment bracket counter
+                        else if (operator == "(") {
+                            outputID.textContent += operator
+                            bracketOpened++
+                        }
+                        // If close bracket, make sure open bracket does not immediately preceed it. Avoids scanarios like "()"
+                        else if (operator == ")"){
+                            if (bracketOpened && getPreviousCharacter() != "(") {                          
+                                outputID.textContent += operator
+                                bracketOpened--
+                            }
                         }
                         // If clear, erase display and allow decimals to be used
                         else if (operator == "Clear") {
@@ -126,17 +142,22 @@
                             .replace(regexOpeningBracket, '*(')
                             .replace(regexClosingBracket, ')*')
 
-                const string = "3%"
-                console.log(string)
+                // const string = "3%"
+                // console.log(string)
 
                 // Evaulate arithmetic string and return value
-                return Function(`'use strict'; return (${string})`)()
+                return Function(`'use strict'; return (${strRegex})`)()
             }
 
             // Checks if value is float
             function isFloat(n) {
                 return n % 1 ? true : false
             }
+
+            function getPreviousCharacter() {
+                return outputID.textContent.slice(-1)
+            }
+
         </script>
     </body>
 </html>
