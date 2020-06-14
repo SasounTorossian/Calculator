@@ -38,9 +38,10 @@
         </div>
 
         <script>
-            let decimalAllowed = true
-            let outputID = document.getElementById("displayOutput")
+            let decimalAllowed = true // To check if decimal can be places
+            let outputID = document.getElementById("displayOutput") // Output handle
 
+            // Event handler for numeric operands 0-9
             let operandContainer = document.querySelectorAll(".operand")
             operandContainer.forEach(operand => {
                 operand.addEventListener('click', (e) => {
@@ -53,72 +54,88 @@
                 })
             })
 
+            // Event handler for sign operators "+", "-", "*", "/"
             let signOperatorContainer = document.querySelectorAll(".signOperator")
             signOperatorContainer.forEach(signOperator => {
                 signOperator.addEventListener('click', (e) => {
                     operator = e.target.value
 
                     if (operator == "=") {
-                        // const expression = outputID.textContent
-                        let expressionCalc = operate(outputID.textContent)
-                        if (expressionCalc == "Infinity") outputID.textContent = "Not gonna happen"
+                        const expression = outputID.textContent
+                        let expressionCalc = operate(expression)
 
-                        if (!isInt(expressionCalc)) {
+                        // If divided by zero, send message to user
+                        if (expressionCalc == "Infinity") {
+                            outputID.textContent = "Not gonna happen"
+                            return
+                        }
+                        
+                        // If float, truncate to 3 decimal places
+                        if (isFloat(expressionCalc)) {
                             expressionCalc = expressionCalc.toFixed(3)
                         }
-                        outputID.textContent = expressionCalc
-                        console.log(expressionCalc)
-                        return
-                    }
 
-                    const previousCharacter = outputID.textContent.slice(-1)
-                    const signOperators = ['+', '-', 'x', '/', ""]
-                    if (signOperators.indexOf(previousCharacter) == -1) {
-                        outputID.textContent += e.target.value
-                        decimalAllowed = true
+                        outputID.textContent = expressionCalc
+                    }
+                    else {
+                        // Get previous character used
+                        const previousCharacter = outputID.textContent.slice(-1)
+                        const signOperators = ['+', '-', 'x', '/']
+                        // If previous character is sign or blank, then do not accept sign input. Prevents scenarios such as 4++3 or 8*/2
+                        if (signOperators.indexOf(previousCharacter) == -1 &&
+                            previousCharacter != "") {
+                            outputID.textContent += operator
+                            decimalAllowed = true
+                        }
                     }
                 })
             })
 
+            // Event handler called for operators "(", ")", "Back", and "Clear"
             let operatorContainer = document.querySelectorAll(".operator")
                 operatorContainer.forEach(operator => {
                     operator.addEventListener('click', (e) => {
                         operator = e.target.value
 
+                        // If back, remove last element from output
                         if (operator == "Back") {
                             outputID.textContent = outputID.textContent.slice(0, -1)
                         }
+                        // If clear, erase display and allow decimals to be used
                         else if (operator == "Clear") {
                             outputID.textContent = ""
                             decimalAllowed = true
                         }
-                        else if (operator == ")") {
-                            outputID.textContent += operator
-                            decimalAllowed = false
-                        }
                         else {
                             outputID.textContent += operator
-                            decimalAllowed = true
                         }
                     })
                 })
 
             function operate(str) {
+                // Finds and replaces "x" multiply symbol with "*"
                 const regexMultiplySign = /x/g 
-                const regexOpeningBracket = /(?<=[0-9\.])\(/g
-                const regexClosingBracket = /\)(?=[0-9\.])/g
+                // Finds opening brackets preceded by a numeric or decimal e.g. 56(10) in order to replace with "*(" e.g. 56*(10)
+                const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
+                // Finds closing brackets succeeded by a numeric or decimal e.g. (10).1 in order to replace with ")*" e.g. (10)*.1
+                const regexClosingBracket = /\)(?=[0-9\.\()])/g
                 
-                let strRegex = str
+                // Replace necessary "x", "(", ")" symbols with appropriate symbol
+                const strRegex = str
                             .replace(regexMultiplySign, '*')
                             .replace(regexOpeningBracket, '*(')
                             .replace(regexClosingBracket, ')*')
 
-                console.log(strRegex)
-                return Function(`'use strict'; return (${strRegex})`)()
+                const string = "3%"
+                console.log(string)
+
+                // Evaulate arithmetic string and return value
+                return Function(`'use strict'; return (${string})`)()
             }
 
-            function isInt(n) {
-                return n % 1 ? false : true
+            // Checks if value is float
+            function isFloat(n) {
+                return n % 1 ? true : false
             }
         </script>
     </body>
