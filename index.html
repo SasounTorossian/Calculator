@@ -150,18 +150,21 @@
             function operate(str) {
                 // Finds and replaces "x" multiply symbol with "*"
                 const regexMultiplySign = /x/g 
-                // Finds opening brackets preceded by a numeric or decimal e.g. 56(10) in order to replace with "*(" e.g. 56*(10)
+                // Finds opening brackets preceded by a numeric or decimal in order to replace with "*(" e.g. 56(10) -> 56*(10)
                 const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
-                // Finds closing brackets succeeded by a numeric or decimal e.g. (10).1 in order to replace with ")*" e.g. (10)*.1
+                // Finds closing brackets succeeded by a numeric or decimal in order to replace with ")*" e.g. (10).1 -> (10)*.1
                 const regexClosingBracket = /\)(?=[0-9\.\(])/g
+                // Finds double negatives and replaces them with an add symbol. e.g. 5--2 -> 5+2 
+                const regexDoubleNegative = /\-\-/g
                 
                 // Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
                 const strRegex = str
                             .replace(regexMultiplySign, '*')
                             .replace(regexOpeningBracket, '*(')
                             .replace(regexClosingBracket, ')*')
+                            .replace(regexDoubleNegative, '+')
 
-                // const string = "8*-1-1"
+                // let string = "8---1"
                 console.log(strRegex)
 
                 // Evaulate arithmetic string and return value
@@ -186,6 +189,7 @@
                                         .slice(-2)
                                         .split('')
 
+                console.log(lastTwoCharacters)
                 return lastTwoCharacters.every(elem => signOperators.indexOf(elem) > -1)
             }
 
