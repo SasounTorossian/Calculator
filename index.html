@@ -38,6 +38,16 @@
         </div>
 
         <script>
+            // Required task
+            // TODO: zero as default
+            // Refactor/cleanup
+            // TODO: Merge signOperator and operator
+            // TODO: Better bracket handling?
+            // Features
+            // TODO: keyboard
+            // TODO: percentage sign?
+            // TODO: exponent?
+
             let decimalAllowed = true // To check if decimal can be places
             let bracketOpened = 0 // Track how many brackets have been opened
             let outputID = document.getElementById("displayOutput") // Output handle
@@ -48,10 +58,10 @@
             operandContainer.forEach(operand => {
                 operand.addEventListener('click', (e) => {
                     operand = e.target.value
+                    console.log(outputID.textContent.length)
 
                     if(operand != "." || decimalAllowed) {
                         if (operand == ".") decimalAllowed = false
-                        
                         outputID.textContent += operand
                     }  
                 })
@@ -64,7 +74,9 @@
                     operator = e.target.value
 
                     if (operator == "=") {
+                        // Get expression as string from output text box
                         const expression = outputID.textContent
+                        // Calc value based off string
                         let expressionCalc = operate(expression)
 
                         // If divided by zero, send message to user
@@ -80,9 +92,15 @@
 
                         outputID.textContent = expressionCalc
                     }
+                    else if (operator == '-') {
+                        // Allow minus sign to function as negative sign if last two charaters are not alreay sign operators
+                        if(lastTwoCharactersAreSign()) return
+                        outputID.textContent += operator
+                        decimalAllowed = true
+                    }
                     else {
                         const signOperators = ['+', '-', 'x', '/']
-                        // If previous character is sign or blank, then do not accept sign input. Prevents scenarios such as 4++3 or 8*/2
+                        // If previous character is sign, then do not accept sign input. Prevents scenarios such as 4++3 or 8*/2
                         if (signOperators.indexOf(getPreviousCharacter()) == -1 &&
                             getPreviousCharacter() != "") {
                             outputID.textContent += operator
@@ -127,25 +145,27 @@
                         }
                     })
                 })
-
+            
+            // Pass arithmetic expression as string to calc result. Using Regex to find/replace necessary terms. Could have used event handler logic, but wanted to practice some Regex black magic
             function operate(str) {
                 // Finds and replaces "x" multiply symbol with "*"
                 const regexMultiplySign = /x/g 
                 // Finds opening brackets preceded by a numeric or decimal e.g. 56(10) in order to replace with "*(" e.g. 56*(10)
                 const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
                 // Finds closing brackets succeeded by a numeric or decimal e.g. (10).1 in order to replace with ")*" e.g. (10)*.1
-                const regexClosingBracket = /\)(?=[0-9\.\()])/g
+                const regexClosingBracket = /\)(?=[0-9\.\(])/g
                 
-                // Replace necessary "x", "(", ")" symbols with appropriate symbol
+                // Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
                 const strRegex = str
                             .replace(regexMultiplySign, '*')
                             .replace(regexOpeningBracket, '*(')
                             .replace(regexClosingBracket, ')*')
 
-                // const string = "3%"
-                // console.log(string)
+                // const string = "8*-1-1"
+                console.log(strRegex)
 
                 // Evaulate arithmetic string and return value
+                // TODO: Error condition to tell user
                 return Function(`'use strict'; return (${strRegex})`)()
             }
 
@@ -154,8 +174,19 @@
                 return n % 1 ? true : false
             }
 
+            // Get's previous value
             function getPreviousCharacter() {
                 return outputID.textContent.slice(-1)
+            }
+
+            // Checks if previous two characters are signs. Allows the placement of a minus symbol to represent negative after a sign operator e.g. 7*-1 = -7, but prevents multiple signs being strung together e.g. 7*---1 = ERROR
+            function lastTwoCharactersAreSign() {
+                const signOperators = ['+', '-', 'x', '/']
+                let lastTwoCharacters = outputID.textContent
+                                        .slice(-2)
+                                        .split('')
+
+                return lastTwoCharacters.every(elem => signOperators.indexOf(elem) > -1)
             }
 
         </script>
