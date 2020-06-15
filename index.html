@@ -50,6 +50,9 @@
 
             let decimalAllowed = true // To check if decimal can be places
             let bracketOpened = 0 // Track how many brackets have been opened
+            // Create a list of sign operators for use in functions
+            const signOperators = Array.from(document.querySelectorAll(".signOperator")).map(signOperator => signOperator.value)
+
             let outputID = document.getElementById("displayOutput") // Output handle
             outputID.textContent = ""
 
@@ -93,19 +96,16 @@
                         outputID.textContent = expressionCalc
                     }
                     else if (operator == '-') {
-                        // Allow minus sign to function as negative sign if last two charaters are not alreay sign operators
-                        if(lastTwoCharactersAreSign()) return
+                        // Allow minus sign to function as negative sign if last two charaters are not already sign operators
+                        if(matchPreviousCharacters(-2, signOperators)) return
                         outputID.textContent += operator
                         decimalAllowed = true
                     }
                     else {
-                        const signOperators = ['+', '-', 'x', '/']
-                        // If previous character is sign, then do not accept sign input. Prevents scenarios such as 4++3 or 8*/2
-                        if (signOperators.indexOf(getPreviousCharacter()) == -1 &&
-                            getPreviousCharacter() != "") {
-                            outputID.textContent += operator
-                            decimalAllowed = true
-                        }
+                        // If previous character is open bracket signoperator, then do not accept sign input. Prevents scenarios such as 27(.5) and 8*/2
+                        if (matchPreviousCharacters(-1, "(", signOperators)) return
+                        outputID.textContent += operator
+                        decimalAllowed = true
                     }
                 })
             })
@@ -119,8 +119,8 @@
                         console.log(bracketOpened)
                         // If back, remove last element from output
                         if (operator == "Back") {
-                            if (getPreviousCharacter() == ")") bracketOpened++
-                            if (getPreviousCharacter() == "(") bracketOpened--
+                            if (matchPreviousCharacters(-1, ")")) bracketOpened++
+                            if (matchPreviousCharacters(-1, "(")) bracketOpened--
                             outputID.textContent = outputID.textContent.slice(0, -1)
                         }
                         // If open bracket, increment bracket counter
@@ -128,12 +128,11 @@
                             outputID.textContent += operator
                             bracketOpened++
                         }
-                        // If close bracket, make sure open bracket does not immediately preceed it. Avoids scanarios like "()"
+                        // If close bracket, make sure open bracket or sign operator does not immediately preceed it. Avoids scenarios like "()" or "45+(2+)"
                         else if (operator == ")"){
-                            if (bracketOpened && getPreviousCharacter() != "(") {                          
-                                outputID.textContent += operator
-                                bracketOpened--
-                            }
+                            if (!bracketOpened || matchPreviousCharacters(-1, "(", signOperators)) return                   
+                            outputID.textContent += operator
+                            bracketOpened--
                         }
                         // If clear, erase display and allow decimals to be used
                         else if (operator == "Clear") {
@@ -177,20 +176,15 @@
                 return n % 1 ? true : false
             }
 
-            // Get's previous value
-            function getPreviousCharacter() {
-                return outputID.textContent.slice(-1)
-            }
-
-            // Checks if previous two characters are signs. Allows the placement of a minus symbol to represent negative after a sign operator e.g. 7*-1 = -7, but prevents multiple signs being strung together e.g. 7*---1 = ERROR
-            function lastTwoCharactersAreSign() {
-                const signOperators = ['+', '-', 'x', '/']
-                let lastTwoCharacters = outputID.textContent
-                                        .slice(-2)
+            // Checks n previous characters to see if they contain itemToMatch1 and itemToMatch2. Possible to only supply itemToMatch1 parameter. Will return true if items locate
+            function matchPreviousCharacters(n, itemToMatch1, itemToMatch2 = "") {
+                if (n >= 0) return false
+                let itemsToMatch = [...itemToMatch1, ...itemToMatch2]
+                let lastNCharacters = outputID.textContent
+                                        .slice(n)
                                         .split('')
 
-                console.log(lastTwoCharacters)
-                return lastTwoCharacters.every(elem => signOperators.indexOf(elem) > -1)
+                return lastNCharacters.every(elem => itemsToMatch.indexOf(elem) > -1)
             }
 
         </script>
