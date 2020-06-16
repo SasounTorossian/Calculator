@@ -45,6 +45,8 @@
             // TODO: percentage sign?
             // TODO: exponent?
 
+            // Check if first time typing
+            let firstInput = true
             // To check if decimal can be places
             let decimalAllowed = true 
             // Track how many brackets have been opened
@@ -55,7 +57,7 @@
             const signOperators = [...document.querySelectorAll(".signOperator")].map(signOperator => signOperator.value)
 
             let outputID = document.getElementById("displayOutput") // Output handle
-            outputID.textContent = ""
+            outputID.textContent = "0"
 
             // Event handler for numeric operands 0-9
             let operandContainer = document.querySelectorAll(".operand")
@@ -63,10 +65,17 @@
                 operand.addEventListener('click', (e) => {
                     operand = e.target.value
 
+                    console.log(`firstInput ${firstInput}`)
                     if(operand != "." || decimalAllowed) {
                         if (operand == ".") decimalAllowed = false
-                        outputID.textContent += operand
-                    }  
+                        if (firstInput) {
+                            outputID.textContent = operand
+                            firstInput = false  
+                        }
+                        else {
+                            outputID.textContent += operand
+                        }
+                    }
                 })
             })
 
@@ -86,6 +95,7 @@
                             // If divided by zero, send message to user
                             if (!isFinite(expressionCalc)) {
                                 outputID.textContent = errorMessage
+                                firstInput = true
                                 return
                             }
                             
@@ -95,23 +105,33 @@
                             }
 
                             outputID.textContent = expressionCalc
-                            break
+                            return
 
                         case "-":
                             // Allow minus sign to function as negative sign if last characters are not already sign operators
-                            console.log(matchPreviousCharacters(-1, signOperators))
+                            // console.log(matchPreviousCharacters(-1, signOperators))
                             if(matchPreviousCharacters(-2, signOperators)) return
-                            // if(matchPreviousCharacters(-1, signOperators)) return
-                            outputID.textContent += operator
+                            if (firstInput) {
+                                outputID.textContent = operator
+                                firstInput = false
+                            }
+                            else {
+                                outputID.textContent += operator
+                            }
                             decimalAllowed = true
-                            break 
+                            return 
 
                         default:
                             // If previous character is open bracket signoperator, then do not accept sign input. Prevents scenarios such as 27(.5) and 8*/2
                             if (matchPreviousCharacters(-1, "(", signOperators)) return
+                            if (firstInput && outputID.textContent == errorMessage) return
                             outputID.textContent += operator
+                            firstInput = false
                             decimalAllowed = true
+                            return
                     }
+
+                    // console.log(`firstInput ${firstInput}`)
                 })
             })
 
@@ -127,20 +147,21 @@
                                 if (matchPreviousCharacters(-1, ")")) openedBrackets++
                                 if (matchPreviousCharacters(-1, "(")) openedBrackets--
                                 outputID.textContent = outputID.textContent.slice(0, -1)
-                                break
+                                return
 
                             case "Clear":
                                 // If clear, erase display and allow decimals to be used
-                                outputID.textContent = ""
+                                outputID.textContent = "0"
+                                firstInput = true
                                 decimalAllowed = true
                                 openedBrackets = 0
-                                break
+                                return
 
                             case "(":
                                 // If open bracket, increment bracket counter
                                 outputID.textContent += operator
                                 openedBrackets++
-                                break
+                                return
 
                             case ")":
                                 // If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
@@ -148,11 +169,13 @@
                                 if (!openedBrackets || matchPreviousCharacters(-2, "(", ".")) return                 
                                 outputID.textContent += operator
                                 openedBrackets--
-                                break
+                                return
 
                             default:
-                                break
+                                return
                         }
+
+                        firstInput = false
                     })
                 })
             
