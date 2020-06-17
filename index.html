@@ -38,8 +38,6 @@
         </div>
 
         <script>
-            // Required task
-            // TODO: zero as default
             // Features
             // TODO: keyboard
             // TODO: percentage sign?
@@ -65,17 +63,11 @@
                 operand.addEventListener('click', (e) => {
                     operand = e.target.value
 
-                    console.log(`firstInput ${firstInput}`)
-                    if(operand != "." || decimalAllowed) {
+                        if (operand == "." && !decimalAllowed) return
                         if (operand == ".") decimalAllowed = false
-                        if (firstInput) {
-                            outputID.textContent = operand
-                            firstInput = false  
-                        }
-                        else {
-                            outputID.textContent += operand
-                        }
-                    }
+                        if (firstInput) outputID.textContent = operand
+                        else outputID.textContent += operand
+                        firstInput = false  
                 })
             })
 
@@ -85,7 +77,7 @@
                 signOperator.addEventListener('click', (e) => {
                     operator = e.target.value
 
-                    switch(operator) {
+                    switch (operator) {
                         case "=":
                             // Get expression as string from output text box
                             const expression = outputID.textContent
@@ -141,7 +133,7 @@
                     operator.addEventListener('click', (e) => {
                         operator = e.target.value
 
-                        switch(operator) {
+                        switch (operator) {
                             case "Back":
                                 // If back, remove last element from output. Keeps track of opened brackets if there are any.
                                 if (matchPreviousCharacters(-1, ")")) openedBrackets++
