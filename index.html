@@ -63,7 +63,10 @@
                 operand.addEventListener('click', (e) => {
                     operand = e.target.value
 
-                        if (operand == "." && !decimalAllowed) return
+                        if (operand == "." && !decimalAllowed) {
+                            inavlidInput()
+                            return
+                        }
                         if (operand == ".") decimalAllowed = false
                         if (firstInput) outputID.textContent = operand
                         else outputID.textContent += operand
@@ -102,7 +105,10 @@
                         case "-":
                             // Allow minus sign to function as negative sign if last characters are not already sign operators
                             // console.log(matchPreviousCharacters(-1, signOperators))
-                            if(matchPreviousCharacters(-2, signOperators)) return
+                            if(matchPreviousCharacters(-2, signOperators)) {
+                                inavlidInput()
+                                return
+                            }
                             if (firstInput) {
                                 outputID.textContent = operator
                                 firstInput = false
@@ -114,9 +120,12 @@
                             return 
 
                         default:
-                            // If previous character is open bracket signoperator, then do not accept sign input. Prevents scenarios such as 27(.5) and 8*/2
-                            if (matchPreviousCharacters(-1, "(", signOperators)) return
-                            if (firstInput && outputID.textContent == errorMessage) return
+                            // If previous character is open bracket sign operator, then do not accept sign input. Prevents scenarios such as 27(.5) and 8*/2
+                            if (matchPreviousCharacters(-1, "(", signOperators) || 
+                               (firstInput && outputID.textContent == errorMessage)) {
+                                   inavlidInput()
+                                   return
+                               }
                             outputID.textContent += operator
                             firstInput = false
                             decimalAllowed = true
@@ -157,8 +166,10 @@
 
                             case ")":
                                 // If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
-                                if (!openedBrackets || matchPreviousCharacters(-1, "(", signOperators)) return  
-                                if (!openedBrackets || matchPreviousCharacters(-2, "(", ".")) return                 
+                                if (!openedBrackets || matchPreviousCharacters(-1, "(", signOperators) || matchPreviousCharacters(-2, "(", ".")) {
+                                    inavlidInput()
+                                    return
+                                }                 
                                 outputID.textContent += operator
                                 openedBrackets--
                                 return
@@ -189,12 +200,19 @@
                             .replace(regexClosingBracket, ')*')
                             .replace(regexDoubleNegative, '+')
 
-                // let string = "8---1"
-                // console.log(strRegex)
 
                 // Evaulate arithmetic string and return value
                 // TODO: Error condition to tell user
                 return Function(`'use strict'; return (${strRegex})`)()
+            }
+
+            // Error function for when user selects "=" on an invalid input.
+            window.onerror = function() {
+                inavlidInput()
+            }
+
+            function inavlidInput() {
+                console.log ("NO")
             }
 
             // Checks if value is float
