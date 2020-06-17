@@ -38,9 +38,6 @@
         </div>
 
         <script>
-            // Features
-            // TODO: keyboard
-
             // Check if first time typing
             let firstInput = true
             // To check if decimal can be places
@@ -56,6 +53,7 @@
 
             let outputID = document.getElementById("displayOutput") // Output handle
             outputID.textContent = "0"
+
 
             let operandFunc = function(e) {
                 let operand
@@ -118,8 +116,9 @@
 
                     case "-":
                         // Allow minus sign to function as negative sign if last characters are not already sign operators
-                        // console.log(matchPreviousCharacters(-1, signOperators))
-                        if(matchPreviousCharacters(-2, signOperators)) {
+                        // console.log()
+                        if(matchPreviousCharacters(-2, signOperators) ||
+                            matchPreviousCharacters(-1, "-")) {
                             inavlidInput()
                             return
                         }
@@ -128,7 +127,7 @@
                         break 
 
                     default:
-                        // If previous character is open bracket sign operator, then do not accept sign input. Prevents scenarios such as 27(.5) and 8*/2
+                        // If previous character is open bracket or sign operator, then do not accept sign input. Prevents scenarios such as 27(*5) and 8*/2
                         if (matchPreviousCharacters(-1, "(", signOperators) || 
                         (firstInput && outputID.textContent == errorMessage)) {
                             inavlidInput()
@@ -152,10 +151,12 @@
             // Keyboard event handler for sign operators "+", "-", "*", "/"
             window.addEventListener('keydown', signOperatorFunc, false)
 
+
             let operatorFunc = function(e) {
                 let operator
 
                 if(e.type == 'keydown' && operators.indexOf(e.key) > -1) operator = e.key
+                else if(e.type == 'keydown' && e.key == 'c') operator = "Clear"
                 else if (e.type == 'click') operator = e.target.value
                 else return
 
@@ -217,19 +218,15 @@
                 const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
                 // Finds closing brackets succeeded by a numeric or decimal in order to replace with ")*" e.g. (10).1 -> (10)*.1
                 const regexClosingBracket = /\)(?=[0-9\.\(])/g
-                // Finds double negatives and replaces them with an add symbol. e.g. 5--2 -> 5+2 
-                const regexDoubleNegative = /\-\-/g
                 
                 // Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
                 const strRegex = str
                             .replace(regexMultiplySign, '*')
                             .replace(regexOpeningBracket, '*(')
                             .replace(regexClosingBracket, ')*')
-                            .replace(regexDoubleNegative, '+')
 
 
                 // Evaulate arithmetic string and return value
-                // TODO: Error condition to tell user
                 return Function(`'use strict'; return (${strRegex})`)()
             }
 
