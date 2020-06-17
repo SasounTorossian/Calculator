@@ -40,8 +40,6 @@
         <script>
             // Features
             // TODO: keyboard
-            // TODO: percentage sign?
-            // TODO: exponent?
 
             // Check if first time typing
             let firstInput = true
@@ -83,23 +81,21 @@
                     switch (operator) {
                         case "=":
                             // Get expression as string from output text box
-                            const expression = outputID.textContent
+                            const exp = outputID.textContent
                             // Calc value based off string
-                            let expressionCalc = operate(expression)
+                            let expCalc = operate(exp)
 
                             // If divided by zero, send message to user
-                            if (!isFinite(expressionCalc)) {
+                            if (!isFinite(expCalc)) {
                                 outputID.textContent = errorMessage
                                 firstInput = true
                                 return
                             }
                             
                             // If float, truncate to 3 decimal places
-                            if (isFloat(expressionCalc)) {
-                                expressionCalc = expressionCalc.toFixed(3)
-                            }
+                            if (isFloat(expCalc)) expCalc = expCalc.toFixed(3)
 
-                            outputID.textContent = expressionCalc
+                            outputID.textContent = expCalc
                             return
 
                         case "-":
