@@ -58,19 +58,29 @@
             // Event handler for numeric operands 0-9
             let operandContainer = document.querySelectorAll(".operand")
             operandContainer.forEach(operand => {
-                operand.addEventListener('click', (e) => {
-                    operand = e.target.value
-
-                        if (operand == "." && !decimalAllowed) {
-                            inavlidInput()
-                            return
-                        }
-                        if (operand == ".") decimalAllowed = false
-                        if (firstInput) outputID.textContent = operand
-                        else outputID.textContent += operand
-                        firstInput = false  
-                })
+                operand.addEventListener('click', operandFunc, false)
             })
+
+            window.addEventListener('keydown', operandFunc, false)
+
+            let operandFunc = function (e) {
+                let operand
+
+                if(e.type == 'keydown' && isFinite(parseInt(e.key))) operand = e.key
+                else if (e.type == 'click') operand = e.target.value
+                else return
+
+                if (operand == "." && !decimalAllowed) {
+                    inavlidInput()
+                    return
+                }
+                if (operand == ".") decimalAllowed = false
+                if (firstInput) outputID.textContent = operand
+                else outputID.textContent += operand
+
+                firstInput = false 
+                this.blur(); // Removes focus from buttons
+            }
 
             // Event handler for sign operators "+", "-", "*", "/"
             let signOperatorContainer = document.querySelectorAll(".signOperator")
