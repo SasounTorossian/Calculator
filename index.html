@@ -109,15 +109,9 @@
                                 inavlidInput()
                                 return
                             }
-                            if (firstInput) {
-                                outputID.textContent = operator
-                                firstInput = false
-                            }
-                            else {
-                                outputID.textContent += operator
-                            }
-                            decimalAllowed = true
-                            return 
+                            if (firstInput) outputID.textContent = operator
+                            else outputID.textContent += operator
+                            break 
 
                         default:
                             // If previous character is open bracket sign operator, then do not accept sign input. Prevents scenarios such as 27(.5) and 8*/2
@@ -127,12 +121,11 @@
                                    return
                                }
                             outputID.textContent += operator
-                            firstInput = false
-                            decimalAllowed = true
-                            return
+                            break
                     }
 
-                    // console.log(`firstInput ${firstInput}`)
+                    firstInput = false
+                    decimalAllowed = true
                 })
             })
 
@@ -148,7 +141,7 @@
                                 if (matchPreviousCharacters(-1, ")")) openedBrackets++
                                 if (matchPreviousCharacters(-1, "(")) openedBrackets--
                                 outputID.textContent = outputID.textContent.slice(0, -1)
-                                return
+                                break
 
                             case "Clear":
                                 // If clear, erase display and allow decimals to be used
@@ -160,9 +153,10 @@
 
                             case "(":
                                 // If open bracket, increment bracket counter
-                                outputID.textContent += operator
+                                if (firstInput) outputID.textContent = operator
+                                else outputID.textContent += operator
                                 openedBrackets++
-                                return
+                                break
 
                             case ")":
                                 // If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
@@ -172,10 +166,10 @@
                                 }                 
                                 outputID.textContent += operator
                                 openedBrackets--
-                                return
+                                break
 
                             default:
-                                return
+                                break
                         }
 
                         firstInput = false
