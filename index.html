@@ -47,7 +47,7 @@
             // Track how many brackets have been opened
             let openedBrackets = 0 
             // Error message for division by zero
-            const errorMessage = "C'mon, You know you can't divide by zero"
+            const errorMessage = "I'm sorry Dave"
             // Create a list of sign operators for use in function comparisons
             const signOperators = [...document.querySelectorAll(".signOperator")].map(signOperator => signOperator.value)
             // Create a list of operator for use in function comparisons 
@@ -69,6 +69,10 @@
                     inavlidInput()
                     return
                 }
+                // if (operand == "0" && matchPreviousCharacters(-1, "0") && decimalAllowed) {
+                //     inavlidInput()
+                //     return
+                // }
                 if (operand == ".") decimalAllowed = false
                 if (firstInput) outputID.textContent = operand
                 else outputID.textContent += operand
@@ -112,6 +116,8 @@
                         
                         // If float, truncate to 3 decimal places
                         if (isFloat(expCalc)) expCalc = expCalc.toFixed(3)
+                        //If zero, treat result as first input
+                        if (expCalc == "0") firstInput = true
 
                         outputID.textContent = expCalc
                         return
