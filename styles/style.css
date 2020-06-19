@@ -93,25 +93,23 @@ display: contents;
     width: auto;
     padding: 5px;
     text-align: right;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 30px;
     line-height: 80px;
 }
 
 /* KEYS */
-.operand {
+.operand, .signOperator, .operator{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 30px;
 }
 
-.signOperator {
+/* FOOTER */ 
+#footer {
+    margin: 0 auto;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 30px;
+    font-weight: 500;
+    font-size: 19px;
 }
-
-.operator {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 30px;
-}
-
 
 
