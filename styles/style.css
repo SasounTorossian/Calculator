@@ -88,8 +88,10 @@ display: contents;
 
 /* DISPLAY */
 #display {
-    margin: 5px 0;
-    border: 3px solid rgba(0, 0, 0, 0.151);
+    margin: 0;
+    border-top: 3px solid rgba(0, 0, 0, 0.151);
+    border-right: 3px solid rgba(0, 0, 0, 0.151);
+    border-left: 3px solid rgba(0, 0, 0, 0.151);
     width: auto;
     padding: 5px;
     text-align: right;
@@ -98,7 +100,7 @@ display: contents;
     text-overflow: "";
     overflow: hidden;
     white-space: nowrap;
-    line-height: 80px;
+    line-height: 90px;
 }
 
 /* KEYS */

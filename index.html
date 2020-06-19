@@ -114,8 +114,8 @@
                             return
                         }
                         
-                        // If float, truncate to 3 decimal places
-                        if (isFloat(expCalc)) expCalc = expCalc.toFixed(3)
+                        // If float, truncate to 6 decimal places
+                        if (isFloat(expCalc)) expCalc = expCalc.toFixed(6)
                         //If zero, treat result as first input
                         if (expCalc == "0") firstInput = true
 
