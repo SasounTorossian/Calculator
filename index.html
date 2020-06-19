@@ -156,7 +156,6 @@
 
             let operatorFunc = function(e) {
                 let operator
-                console.log(e.key)
 
                 if(e.type == 'keydown' && operators.indexOf(e.key) > -1) operator = e.key
                 else if(e.type == 'keydown' && (e.key == 'c' || e.key == 'C')) operator = "Clear"
