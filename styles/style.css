@@ -88,9 +88,13 @@ display: contents;
 
 /* DISPLAY */
 #display {
-    margin: 15px auto;
+    margin: 5px 0;
     border: 3px solid rgba(0, 0, 0, 0.151);
-    width: 395px;
+    width: auto;
+    padding: 5px;
+    text-align: right;
+    font-size: 30px;
+    line-height: 80px;
 }
 
 /* KEYS */
