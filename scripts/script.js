@@ -152,6 +152,7 @@ let operatorFunc = function(e) {
 			// If back, remove last element from output. Keeps track of opened brackets if there are any.
 			if (matchPreviousCharacters(-1, ")")) openedBrackets++
 			if (matchPreviousCharacters(-1, "(")) openedBrackets--
+			if (matchPreviousCharacters(-1, ".")) decimalAllowed = true
 			outputID.textContent = outputID.textContent.slice(0, -1)
 			break
 
