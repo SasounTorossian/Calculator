@@ -81,19 +81,25 @@ let signOperatorFunc = function(e) {
 			// Calc value based off string
 			let expCalc = operate(exp)
 			// Round value to 3 decimal places if needed
-			expCalc = roundToN(expCalc, 3)
+			let expCalcRounded = roundToN(expCalc, 3)
+
+			// If rounding truncates decimal value to zero (hence removing decimal) e.g. 0.00002 x 2 = 0, then allow decimals to be used again. 
+			if (!Number.isInteger(expCalc) && 
+				Number.isInteger(expCalcRounded)) {
+					decimalAllowed = true
+				}
 
 			// If divided by zero, send message to user
-			if (!isFinite(expCalc)) {
+			if (!isFinite(expCalcRounded)) {
 				outputID.textContent = errorMessage
 				firstInput = true
 				return
 			}
 									
 			//If zero, treat result as first input
-			if (expCalc == "0") firstInput = true
+			if (expCalcRounded == "0") firstInput = true
 
-			outputID.textContent = expCalc
+			outputID.textContent = expCalcRounded
 			return
 
 		case "-":
