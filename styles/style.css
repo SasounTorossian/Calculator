@@ -89,9 +89,7 @@ display: contents;
 /* DISPLAY */
 #display {
     margin: 0;
-    border-top: 3px solid rgba(0, 0, 0, 0.151);
-    border-right: 3px solid rgba(0, 0, 0, 0.151);
-    border-left: 3px solid rgba(0, 0, 0, 0.151);
+    border: 3px solid rgba(0, 0, 0, 0.151);
     width: auto;
     padding: 5px;
     text-align: right;

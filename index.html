@@ -240,15 +240,6 @@
                 return Function(`'use strict'; return (${strRegex})`)()
             }
 
-            // Error function for when user selects "=" on an invalid input.
-            window.onerror = function() {
-                inavlidInput()
-            }
-
-            function inavlidInput() {
-                console.log ("NO")
-            }
-
             // Checks if value is float
             function isFloat(n) {
                 return n % 1 ? true : false
