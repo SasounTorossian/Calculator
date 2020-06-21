@@ -106,6 +106,8 @@
                         const exp = outputID.textContent
                         // Calc value based off string
                         let expCalc = operate(exp)
+                        // Round value to 3 decimal places if needed
+                        expCalc = roundToN(expCalc, 3)
 
                         // If divided by zero, send message to user
                         if (!isFinite(expCalc)) {
@@ -113,9 +115,7 @@
                             firstInput = true
                             return
                         }
-                        
-                        // If float, truncate to 6 decimal places
-                        if (isFloat(expCalc)) expCalc = expCalc.toFixed(6)
+                                              
                         //If zero, treat result as first input
                         if (expCalc == "0") firstInput = true
 
@@ -252,6 +252,11 @@
             // Checks if value is float
             function isFloat(n) {
                 return n % 1 ? true : false
+            }
+
+            // Rounds num to n decimal places only if needed. e.g. 4/2=2 2/4=0.5, 5/3=1.667
+            function roundToN(num, n) {
+                return (Math.round(num * 10**n) / 10**n)
             }
 
             // Checks n previous characters to see if they contain itemToMatch1 and itemToMatch2. Possible to only supply itemToMatch1 parameter. Will return true if all provided items locate
