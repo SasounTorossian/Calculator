@@ -23,18 +23,34 @@ let operandFunc = function(e) {
 	else if (e.type == 'click') operand = e.target.value
 	else return
 
-	if (operand == "." && !decimalAllowed) {
-		inavlidInput()
-		return
+	if (outputID.textContent == "") {
+		outputID.textContent = "0"
+		firstInput = true
 	}
-	// if (operand == "0" && matchPreviousCharacters(-1, "0") && decimalAllowed) {
-	//     inavlidInput()
-	//     return
-	// }
-	if (operand == ".") decimalAllowed = false
-	if (firstInput) outputID.textContent = operand
-	else outputID.textContent += operand
+	if (operand == "." && !decimalAllowed) return
+	if (operand == "0" && firstInput) return
 
+	if(matchPreviousCharacters(-1, "0") && 
+		matchPreviousCharacters(-2, signOperators, "", false)) {
+			if (operand == "0") return
+			if (operand == ".") {
+				decimalAllowed = false
+				outputID.textContent += operand
+			}
+			else {
+				outputID.textContent = outputID.textContent.slice(0, -1)
+				outputID.textContent += operand
+				
+			}
+	} 
+	else {
+		if (operand == ".") decimalAllowed = false
+		if (firstInput) outputID.textContent = operand
+		else {
+			outputID.textContent += operand
+		}
+	}
+	
 	firstInput = false 
 	this.blur(); // Removes focus from buttons
 }
@@ -85,7 +101,6 @@ let signOperatorFunc = function(e) {
 			// console.log()
 			if(matchPreviousCharacters(-2, signOperators) ||
 				matchPreviousCharacters(-1, "-")) {
-				inavlidInput()
 				return
 			}
 			if (firstInput) outputID.textContent = operator
@@ -96,7 +111,6 @@ let signOperatorFunc = function(e) {
 			// If previous character is open bracket or sign operator, then do not accept sign input. Prevents scenarios such as 27(*5) and 8*/2
 			if (matchPreviousCharacters(-1, "(", signOperators) || 
 				(firstInput && outputID.textContent == errorMessage)) {
-				inavlidInput()
 				return
 			}
 			outputID.textContent += operator
@@ -154,7 +168,6 @@ let operatorFunc = function(e) {
 			// If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
 			if (!openedBrackets || matchPreviousCharacters(-1, "(", signOperators) || 
 				matchPreviousCharacters(-2, "(", ".")) {
-				inavlidInput()
 				return
 			}                 
 			outputID.textContent += operator
@@ -193,7 +206,6 @@ function operate(str) {
 				.replace(regexOpeningBracket, '*(')
 				.replace(regexClosingBracket, ')*')
 
-
 	// Evaulate arithmetic string and return value
 	return Function(`'use strict'; return (${strRegex})`)()
 }
@@ -209,12 +221,15 @@ function roundToN(num, n) {
 }
 
 // Checks n previous characters to see if they contain itemToMatch1 and itemToMatch2. Possible to only supply itemToMatch1 parameter. Will return true if all provided items locate
-function matchPreviousCharacters(n, itemToMatch1, itemToMatch2 = "") {
+function matchPreviousCharacters(n, itemToMatch1, itemToMatch2 = "", every = true) {
 	if (n >= 0) return false
 	let itemsToMatch = [...itemToMatch1, ...itemToMatch2]
 	let lastNCharacters = outputID.textContent
 							.slice(n)
 							.split('')
 							
-	return lastNCharacters.every(elem => itemsToMatch.indexOf(elem) > -1)
+	// console.log(itemsToMatch)
+	// console.log(lastNCharacters)
+	if (every) return lastNCharacters.every(elem => itemsToMatch.indexOf(elem) > -1)
+	else return lastNCharacters.some(elem => itemsToMatch.indexOf(elem) > -1)
 }
