@@ -75,7 +75,6 @@ function appendOperand(operand) {
 }
 
 function appendSignOperator(operator){
-
 	switch (operator) {
 		case "=":
 			// Get expression as string from output text box
@@ -92,7 +91,7 @@ function appendSignOperator(operator){
 				return
 			}
 
-			//If zero, treat result as first input
+			//If result is zero, treat result as first input
 			if (expCalcRounded == "0") firstInput = true
 
 			// If result contains decimal, prevent another decimal placement.
@@ -132,27 +131,11 @@ function appendSignOperator(operator){
 function appendOperator(operator) {
 	switch (operator) {
 		case "Back":
-			// Keeps track of opened brackets if there are any. Keeps track of decimals. 
-			if (matchNthChar(-1, ")")) openedBrackets++
-			if (matchNthChar(-1, "(")) openedBrackets--
-			if (matchNthChar(-1, ".")) decimalAllowed = true
-			// Remove last element from output
-			outputID.textContent = outputID.textContent.slice(0, -1)
-			// If result of backspace still includes '.' prevent decimal
-			if(outputID.textContent.includes('.')) decimalAllowed = false
-			// If backspacing results in cleared screen, create default 0 and set to first input.
-			if (outputID.textContent == "") {
-				outputID.textContent = "0"
-				firstInput = true
-			}
+			back()
 			break
 
 		case "Clear":
-			// If clear, erase display and allow decimals to be used
-			outputID.textContent = "0"
-			firstInput = true
-			decimalAllowed = true
-			openedBrackets = 0
+			clear()
 			return
 
 		case "(":
@@ -183,8 +166,8 @@ function appendOperator(operator) {
 	this.blur(); // Removes focus from buttons
 }
 
+// Evaluate arithmetic string and return value
 function operate(str) {
-	// Evaulate arithmetic string and return value
 	return Function(`'use strict'; return (${regexParse(str)})`)()
 }
 
@@ -219,4 +202,29 @@ function regexParse(str) {
 				.replace(regexMultiplySign, '*')
 				.replace(regexOpeningBracket, '*(')
 				.replace(regexClosingBracket, ')*')
+}
+
+// removes last character from output
+function back() {
+	// Keeps track of opened brackets if there are any. Keeps track of decimals. 
+	if (matchNthChar(-1, ")")) openedBrackets++
+	if (matchNthChar(-1, "(")) openedBrackets--
+	if (matchNthChar(-1, ".")) decimalAllowed = true
+	// Remove last element from output
+	outputID.textContent = outputID.textContent.slice(0, -1)
+	// If result of backspace still includes '.' prevent decimal
+	if(outputID.textContent.includes('.')) decimalAllowed = false
+	// If backspacing results in cleared screen, create default 0 and set to first input.
+	if (outputID.textContent == "") {
+		outputID.textContent = "0"
+		firstInput = true
+	}
+}
+
+// erase display and reset calculator.
+function clear() {
+	outputID.textContent = "0"
+	firstInput = true
+	decimalAllowed = true
+	openedBrackets = 0
 }
