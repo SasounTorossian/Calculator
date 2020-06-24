@@ -160,6 +160,10 @@ body {
     background: rgb(137, 164, 199);
 }
 
+#Back {
+    font-size: 43px;
+}
+
 #divide {
     border-radius: 0 0 20px 0;
 }
@@ -170,10 +174,14 @@ body {
 
 /* FOOTER */ 
 #footer {
-    margin: 0 auto;
-    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+#footer p {
+    display: inline;
+    vertical-align: top;
     font-weight: 500;
-    font-size: 20px;
+    font-size: 25px;
 }
 
 

@@ -50,8 +50,9 @@ function checkKey(e) {
 	if(regexPattern.test(key)) {
 		if(key == 'Enter') key = "="
 		if(key.toLowerCase() == 'x' || key == '*') key = "x"
+		if(key == '/') key = "÷"
 		if(key.toLowerCase() == 'c') key = "Clear"
-		if(key == "Backspace" || key == "Delete") key = "Back"
+		if(key == "Backspace" || key == "Delete") key = "⇤"
 
 		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
 		else if (operators.indexOf(key) > -1) appendOperator(key)
@@ -141,7 +142,7 @@ function appendSignOperator(operator){
 	
 function appendOperator(operator) {
 	switch (operator) {
-		case "Back":
+		case "⇤":
 			back()
 			break
 
@@ -202,6 +203,8 @@ function matchNthChar(n, match) {
 function regexParse(str) {
 	// Finds and replaces "x" multiply symbol with "*"
 	const regexMultiplySign = /x/g 
+	// Finds and replaces "÷" multiply symbol with "/"
+	const regexDivideSign = /÷/g 
 	// Finds opening brackets preceded by a numeric or decimal in order to replace with "*(" e.g. 56(10) -> 56*(10)
 	const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
 	// Finds closing brackets succeeded by a numeric or decimal in order to replace with ")*" e.g. (10).1 -> (10)*.1
@@ -210,6 +213,7 @@ function regexParse(str) {
 	// Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
 	return strRegex = str
 				.replace(regexMultiplySign, '*')
+				.replace(regexDivideSign, '/')
 				.replace(regexOpeningBracket, '*(')
 				.replace(regexClosingBracket, ')*')
 }
