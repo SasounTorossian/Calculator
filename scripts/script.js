@@ -21,23 +21,16 @@ let outputID = document.getElementById("displayOutput") // Output handle
 outputID.textContent = "0"
 
 
-
-// Click event handler for numeric operands 0-9 and "."
-let operandContainer = document.querySelectorAll(".operand")
-operandContainer.forEach(operand => {
-	operand.addEventListener('click', e => appendOperand(e.target.value), false)
-})
-
-// Click event handler for sign operators "+", "-", "*", "/", "="
-let signOperatorContainer = document.querySelectorAll(".signOperator")
-signOperatorContainer.forEach(signOperator => {
-	signOperator.addEventListener('click', e => appendSignOperator(e.target.value), false)
-})
-
-// Click event handler called for operators "(", ")", "Back", and "Clear"
-let operatorContainer = document.querySelectorAll(".operator")
-	operatorContainer.forEach(operator => {
-		operator.addEventListener('click', e => appendOperator(e.target.value), false) 
+// Click event handler for onscreen buttons
+let keyboardContainer = document.querySelectorAll("#keys input")
+keyboardContainer.forEach(keyboard => {
+	keyboard.addEventListener('click', e => {
+		key = e.target.value
+		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
+		else if (operators.indexOf(key) > -1) appendOperatorkey(key)
+		else if (operands.indexOf(key) > -1)appendOperand(key)
+		else return
+	})
 })
 
 // Keyboard event handler
@@ -57,6 +50,7 @@ function checkKey(e) {
 		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
 		else if (operators.indexOf(key) > -1) appendOperator(key)
 		else if (operands.indexOf(key) > -1)appendOperand(key)
+		else return
 	}
 }
 
