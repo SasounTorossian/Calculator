@@ -60,23 +60,14 @@ function appendOperand(operand) {
 	// If previous character is 0 and preceding character is a sign operator or empty space, do not accept any more zeros. Prevents scenarios like 1+002
 	if (matchNthChar(-1, "0") && 
 		(matchNthChar(-2, signOperators) || matchNthChar(-2, "")))  {
-			if (operand == "0") return
-			if (operand == ".") {
-				decimalAllowed = false
-				outputID.textContent += operand
-			}
-			else {
-				outputID.textContent = outputID.textContent.slice(0, -1)
-				outputID.textContent += operand
-				
-			}
+			if (operand == ".") decimalAllowed = false
+			else outputID.textContent = outputID.textContent.slice(0, -1)
+			outputID.textContent += operand
 	} 
 	else {
 		if (operand == ".") decimalAllowed = false
 		if (firstInput) outputID.textContent = operand
-		else {
-			outputID.textContent += operand
-		}
+		else outputID.textContent += operand
 	}
 	
 	firstInput = false 
