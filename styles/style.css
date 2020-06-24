@@ -1,3 +1,9 @@
+@import url("https://fonts.googleapis.com/css?family=Fira+Mono&display=swap");
+
+* {
+    font-family: "Fire Mono", monospace, sans-serif;
+}
+
 html {
     height: 100%;
     width:  100%;
@@ -6,12 +12,13 @@ html {
 }
 
 body {
-    background-color: white;
+    background: white;
+    background: linear-gradient(135deg, rgba(255,255,255,1) 5%, rgba(164,164,184,1) 50%, rgba(38,139,159,1) 100%);
     display: grid;
     padding: 0%;
     margin: 0%;
     min-height: 100%;
-    grid-template-rows: 1fr 60px;
+    grid-template-rows: 1fr 100px;
     grid-template-areas: 
     "keypad"
     "footer";
@@ -88,16 +95,16 @@ body {
 /* DISPLAY */
 #display {
     display: contents;
-    border: 3px solid rgba(0, 0, 0, 0.151);
-    font-family: Arial, Helvetica, sans-serif;
 }
 
 #display #previousOutput {
-    text-align: left;
-    background-color: rgba(0, 0, 0, 0.20);
+    line-height: 150%;
+    border-radius: 20px 20px 0 0;
+    background-color: rgba(0, 0, 0, 0.25);
     color: black;
-    padding: 20px;
+    padding-left: 20px;
     font-size: 1.5rem;
+    font-style: italic;
     word-wrap: break-word;
     word-break: break-all;
     overflow: scroll;
@@ -108,9 +115,10 @@ body {
 
 #display #displayOutput {
     text-align: right;
-    background-color: rgba(0, 0, 0, 0.20);
+    background-color: rgba(0, 0, 0, 0.25);
     color: black;
-    padding: 20px;
+    padding-top: 10px;
+    padding-right: 20px;
     font-size: 2.5rem;
     word-wrap: break-word;
     word-break: break-all;
@@ -120,9 +128,44 @@ body {
 }
 
 /* KEYS */
-.operand, .signOperator, .operator{
-    font-family: Arial, Helvetica, sans-serif;
+#keys {
+    display: contents;
+}
+
+.operand, 
+.signOperator, 
+.operator{
     font-size: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    border: none
+}
+
+.operand:hover, 
+.signOperator:hover, 
+.operator:hover{
+    filter: brightness(90%);
+}
+
+.operand {
+ background: slategray;
+}
+
+.signOperator {
+    background: orange;
+}
+
+.operator {
+    background: rgb(137, 164, 199);
+}
+
+#divide {
+    border-radius: 0 0 20px 0;
+}
+
+#zero {
+    border-radius: 0 0 0 20px;
 }
 
 /* FOOTER */ 
@@ -130,7 +173,7 @@ body {
     margin: 0 auto;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 500;
-    font-size: 19px;
+    font-size: 20px;
 }
 
 
