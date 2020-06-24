@@ -41,24 +41,13 @@ function checkKey(e) {
 	let regexPattern = /[0-9\.\+\-\*\x\/\=\(\)\c]|Enter|Backspace|Delete/g;
 	if(regexPattern.test(key)) {
 		if(key == 'Enter') key = "="
-		if(key == "*" || key == "x") key = "x"
-		if(key == 'c' ) key = "Clear"
+		if(key == "*" || key.toLowerCase() == "x") key = "x"
+		if(key.toLowerCase() == 'c' ) key = "Clear"
 		if(key == "Backspace" || key == "Delete") key = "Back"
 
-		if (key == '=' || key == "+" || key == "-" || key == "x" || key == "/") {
-			console.log("appendSignOperator")
-			appendSignOperator(key)
-		}
-		else if (key == 'Clear' || key == "Back" || key == "Delete") {
-			console.log("appendOperator")
-			appendOperator(key)
-		}
-		else{
-			console.log("appendOperand")
-			appendOperand(key)
-		}
-		
-
+		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
+		else if (operators.indexOf(key) > -1) appendOperator(key)
+		else appendOperand(key)
 	}
 }
 
@@ -71,8 +60,9 @@ function appendOperand(operand) {
 	if (operand == "." && !decimalAllowed) return
 	if (operand == "0" && firstInput) return
 
-	if(matchPreviousCharacters(-1, "0") && 
-		matchPreviousCharacters(-2, signOperators, "", false)) {
+	// If previous character is 0 and preceding character is a sign operator or empty space, do not accept any more zeros. Prevents scenarios like 1+002
+	if (matchNthChar(-1, "0") && 
+		(matchNthChar(-2, signOperators) || matchNthChar(-2, "")))  {
 			if (operand == "0") return
 			if (operand == ".") {
 				decimalAllowed = false
@@ -130,8 +120,8 @@ function appendSignOperator(operator){
 
 		case "-":
 			// Allow minus sign to function as negative sign if last characters are not already sign operators
-			if(matchPreviousCharacters(-2, signOperators) ||
-				matchPreviousCharacters(-1, "-")) {
+			if(matchNthChar(-1, "-") ||
+				(matchNthChar(-2, signOperators) && matchNthChar(-1, 			signOperators))) {
 				return
 			}
 			if (firstInput) outputID.textContent = operator
@@ -140,7 +130,8 @@ function appendSignOperator(operator){
 
 		default:
 			// If previous character is open bracket or sign operator, then do not accept sign input. Prevents scenarios such as 27(*5) and 8*/2
-			if (matchPreviousCharacters(-1, "(", signOperators) || 
+			if(matchNthChar(-1, "(") || 
+				matchNthChar(-1, signOperators) || 
 				(firstInput && outputID.textContent == errorMessage)) {
 				return
 			}
@@ -157,11 +148,12 @@ function appendSignOperator(operator){
 function appendOperator(operator) {
 	switch (operator) {
 		case "Back":
-			// If back, remove last element from output. Keeps track of opened brackets if there are any.
-			if (matchPreviousCharacters(-1, ")")) openedBrackets++
-			if (matchPreviousCharacters(-1, "(")) openedBrackets--
-			if (matchPreviousCharacters(-1, ".")) decimalAllowed = true
+			// If back, remove last element from output. Keeps track of opened brackets if there are any. Keeps track of decimals. If backspacing results in cleared screnn, create default 0.
+			if (matchNthChar(-1, ")")) openedBrackets++
+			if (matchNthChar(-1, "(")) openedBrackets--
+			if (matchNthChar(-1, ".")) decimalAllowed = true
 			outputID.textContent = outputID.textContent.slice(0, -1)
+			if (outputID.textContent == "") outputID.textContent = "0"
 			break
 
 		case "Clear":
@@ -180,10 +172,14 @@ function appendOperator(operator) {
 			break
 
 		case ")":
-			// If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
-			if (!openedBrackets || matchPreviousCharacters(-1, "(", signOperators) || matchPreviousCharacters(-2, "(", ".")) {
-				return
-			}                 
+			// If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"          
+			if(!openedBrackets || 
+				matchNthChar(-1, "(")|| 
+				matchNthChar(-1, signOperators) ||
+				(matchNthChar(-2, "(") && matchNthChar(-1, "."))) {
+					return
+				}
+
 			outputID.textContent += operator
 			openedBrackets--
 			break
@@ -227,16 +223,14 @@ function roundToN(num, n) {
 	return (Math.round(num * 10**n) / 10**n)
 }
 
-// Checks n previous characters to see if they contain itemToMatch1 and itemToMatch2. Possible to only supply itemToMatch1 parameter. Will return true if all provided items locate
-function matchPreviousCharacters(n, itemToMatch1, itemToMatch2 = "", every = true) {
-	if (n >= 0) return false
-	let itemsToMatch = [...itemToMatch1, ...itemToMatch2]
-	let lastNCharacters = outputID.textContent
-							.slice(n)
-							.split('')
-							
-	// console.log(itemsToMatch)
-	// console.log(lastNCharacters)
-	if (every) return lastNCharacters.every(elem => itemsToMatch.indexOf(elem) > -1)
-	else return lastNCharacters.some(elem => itemsToMatch.indexOf(elem) > -1)
+// Get's nth char of string. Works with postive and negative values
+function getNthChar(n) {
+	const str = outputID.textContent
+	if(n >= 0) return str.charAt(n)
+	else return str.charAt(str.length+n)
+}
+
+// Checks if string at char position matches symbol.
+function matchNthChar(n, match) {
+	return match.indexOf(getNthChar(n)) > -1
 }
