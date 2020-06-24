@@ -6,21 +6,24 @@ let decimalAllowed = true
 let openedBrackets = 0 
 // Error message for division by zero
 const errorMessage = "I'm sorry Dave"
+
 // Create a list of sign operators for use in function comparisons
 const signOperators = [...document.querySelectorAll(".signOperator")].map(signOperator => signOperator.value)
 // Create a list of operator for use in function comparisons 
 const operators = [...document.querySelectorAll(".operator")].map(operator => operator.value)
+// Create a list of operands for use in function comparisons  
+const operands = [...document.querySelectorAll(".operand")].map(operand => operand.value)
 
 let outputID = document.getElementById("displayOutput") // Output handle
 outputID.textContent = "0"
 
-// Click event handler for numeric operands 0-9
+// Click event handler for numeric operands 0-9 and "."
 let operandContainer = document.querySelectorAll(".operand")
 operandContainer.forEach(operand => {
 	operand.addEventListener('click', e => appendOperand(e.target.value), false)
 })
 
-// Click event handler for sign operators "+", "-", "*", "/"
+// Click event handler for sign operators "+", "-", "*", "/", "="
 let signOperatorContainer = document.querySelectorAll(".signOperator")
 signOperatorContainer.forEach(signOperator => {
 	signOperator.addEventListener('click', e => appendSignOperator(e.target.value), false)
@@ -32,31 +35,25 @@ let operatorContainer = document.querySelectorAll(".operator")
 		operator.addEventListener('click', e => appendOperator(e.target.value), false) 
 })
 
-// Keyboard event handler for numeric operands 0-9
+// Keyboard event handler
 window.addEventListener('keydown', checkKey, false)
 
 function checkKey(e) {
-
 	let key = e.key
 	let regexPattern = /[0-9\.\+\-\*\x\/\=\(\)\c]|Enter|Backspace|Delete/g;
 	if(regexPattern.test(key)) {
 		if(key == 'Enter') key = "="
-		if(key == "*" || key.toLowerCase() == "x") key = "x"
-		if(key.toLowerCase() == 'c' ) key = "Clear"
+		if(key.toLowerCase() == 'x' || key == '*') key = "x"
+		if(key.toLowerCase() == 'c') key = "Clear"
 		if(key == "Backspace" || key == "Delete") key = "Back"
 
 		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
 		else if (operators.indexOf(key) > -1) appendOperator(key)
-		else appendOperand(key)
+		else if (operands.indexOf(key) > -1)appendOperand(key)
 	}
 }
 
 function appendOperand(operand) {
-
-	if (outputID.textContent == "") {
-		outputID.textContent = "0"
-		firstInput = true
-	}
 	if (operand == "." && !decimalAllowed) return
 	if (operand == "0" && firstInput) return
 
@@ -97,25 +94,21 @@ function appendSignOperator(operator){
 			// Round value to 3 decimal places if needed
 			let expCalcRounded = roundToN(expCalc, 3)
 
-			// If rounding truncates decimal value to zero (hence removing decimal) e.g. 0.00002 x 2 = 0, then allow decimals to be used again.
-			if (!Number.isInteger(expCalc) && 
-				Number.isInteger(expCalcRounded)) {
-					decimalAllowed = true
-				}
-
 			// If divided by zero, send message to user
 			if (!isFinite(expCalcRounded)) {
 				outputID.textContent = errorMessage
 				firstInput = true
 				return
-			}			
+			}
+
 			//If zero, treat result as first input
 			if (expCalcRounded == "0") firstInput = true
+
 			// If result contains decimal, prevent another decimal placement.
 			if(expCalcRounded.toString().includes('.')) decimalAllowed = false
+			else decimalAllowed = true
 
 			outputID.textContent = expCalcRounded
-			
 			return
 
 		case "-":
@@ -148,12 +141,19 @@ function appendSignOperator(operator){
 function appendOperator(operator) {
 	switch (operator) {
 		case "Back":
-			// If back, remove last element from output. Keeps track of opened brackets if there are any. Keeps track of decimals. If backspacing results in cleared screnn, create default 0.
+			// Keeps track of opened brackets if there are any. Keeps track of decimals. 
 			if (matchNthChar(-1, ")")) openedBrackets++
 			if (matchNthChar(-1, "(")) openedBrackets--
 			if (matchNthChar(-1, ".")) decimalAllowed = true
+			// Remove last element from output
 			outputID.textContent = outputID.textContent.slice(0, -1)
-			if (outputID.textContent == "") outputID.textContent = "0"
+			// If result of backspace still includes '.' prevent decimal
+			if(outputID.textContent.includes('.')) decimalAllowed = false
+			// If backspacing results in cleared screen, create default 0 and set to first input.
+			if (outputID.textContent == "") {
+				outputID.textContent = "0"
+				firstInput = true
+			}
 			break
 
 		case "Clear":
