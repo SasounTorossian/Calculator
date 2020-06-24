@@ -84,7 +84,6 @@ function appendSignOperator(operator){
 		case "=":
 			// Get expression as string from output text box
 			const exp = outputID.textContent
-			prevOutputID.textContent = exp
 			
 			// Calc value based off string
 			let expCalc = operate(exp)
@@ -105,7 +104,13 @@ function appendSignOperator(operator){
 			if(expCalcRounded.toString().includes('.')) decimalAllowed = false
 			else decimalAllowed = true
 
+			// Write result to output
 			outputID.textContent = expCalcRounded
+
+			// Add line break in previous output div, then add expression. Update screen.
+			prevOutputID.innerHTML += "&#10;"
+			prevOutputID.textContent += exp
+			updateScroll()
 			return
 
 		case "-":
@@ -221,11 +226,16 @@ function back() {
 	outputID.textContent = outputID.textContent.slice(0, -1)
 	// If result of backspace still includes '.' prevent decimal
 	if(outputID.textContent.includes('.')) decimalAllowed = false
-	// If backspacing results in cleared screen, create default 0 and set to first input.
+
 	if (outputID.textContent == "") {
+		// When backspacing see if previous output is not empty
 		if (prevOutputID.textContent != "") {
-			outputID.textContent = prevOutputID.textContent
-			prevOutputID.textContent = ""
+			// Split previous expressions on newline, pop last expression, then rejoin. Display last expression in current output.
+			let lastPrevOutputArray = prevOutputID.textContent.split('\n')
+			let lastExp = lastPrevOutputArray.pop()
+			prevOutputID.textContent = lastPrevOutputArray.join('\n')
+			outputID.textContent = lastExp
+			updateScroll()
 		}
 		else {
 			outputID.textContent = "0"
@@ -241,4 +251,9 @@ function clear() {
 	firstInput = true
 	decimalAllowed = true
 	openedBrackets = 0
+}
+
+// Updates scroll wheel in previous output to always be at bottom.
+function updateScroll(){
+    prevOutputID.scrollTop = prevOutputID.scrollHeight;
 }
