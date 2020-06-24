@@ -192,30 +192,9 @@ function appendOperator(operator) {
 	this.blur(); // Removes focus from buttons
 }
 
-
-
-// Pass arithmetic expression as string to calc result. Using Regex to find/replace necessary terms. Could have used event handler logic, but wanted to practice some Regex black magic
 function operate(str) {
-	// Finds and replaces "x" multiply symbol with "*"
-	const regexMultiplySign = /x/g 
-	// Finds opening brackets preceded by a numeric or decimal in order to replace with "*(" e.g. 56(10) -> 56*(10)
-	const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
-	// Finds closing brackets succeeded by a numeric or decimal in order to replace with ")*" e.g. (10).1 -> (10)*.1
-	const regexClosingBracket = /\)(?=[0-9\.\(])/g
-	
-	// Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
-	const strRegex = str
-				.replace(regexMultiplySign, '*')
-				.replace(regexOpeningBracket, '*(')
-				.replace(regexClosingBracket, ')*')
-
 	// Evaulate arithmetic string and return value
-	return Function(`'use strict'; return (${strRegex})`)()
-}
-
-// Checks if value is float
-function isFloat(n) {
-	return n % 1 ? true : false
+	return Function(`'use strict'; return (${regexParse(str)})`)()
 }
 
 // Rounds num to n decimal places only if needed. e.g. 4/2=2 2/4=0.5, 5/3=1.667
@@ -233,4 +212,20 @@ function getNthChar(n) {
 // Checks if string at char position matches symbol.
 function matchNthChar(n, match) {
 	return match.indexOf(getNthChar(n)) > -1
+}
+
+// Pass arithmetic expression as string to calc result. Using Regex to find/replace necessary terms. Could have used event handler logic, but wanted to practice some Regex black magic
+function regexParse(str) {
+	// Finds and replaces "x" multiply symbol with "*"
+	const regexMultiplySign = /x/g 
+	// Finds opening brackets preceded by a numeric or decimal in order to replace with "*(" e.g. 56(10) -> 56*(10)
+	const regexOpeningBracket = /(?<=[0-9\.\)])\(/g
+	// Finds closing brackets succeeded by a numeric or decimal in order to replace with ")*" e.g. (10).1 -> (10)*.1
+	const regexClosingBracket = /\)(?=[0-9\.\(])/g
+	
+	// Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
+	return strRegex = str
+				.replace(regexMultiplySign, '*')
+				.replace(regexOpeningBracket, '*(')
+				.replace(regexClosingBracket, ')*')
 }
