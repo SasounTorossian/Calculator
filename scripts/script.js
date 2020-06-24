@@ -22,29 +22,29 @@ outputID.textContent = "0"
 
 
 // Click event handler for onscreen buttons
-let keyboardContainer = document.querySelectorAll("#keys input")
+let keyboardContainer = document.querySelectorAll("#keyboard input")
 keyboardContainer.forEach(keyboard => {
-	keyboard.addEventListener('click', e => {
+	keyboard.addEventListener("click", e => {
 		key = e.target.value
 		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
-		else if (operators.indexOf(key) > -1) appendOperatorkey(key)
+		else if (operators.indexOf(key) > -1) appendOperator(key)
 		else if (operands.indexOf(key) > -1)appendOperand(key)
 		else return
 	})
 })
 
 // Keyboard event handler
-window.addEventListener('keydown', checkKey, false)
+window.addEventListener("keydown", checkKey, false)
 
 // Parses keystrokes against a regex pattern. Makes appropriate substitutions and calls the appropriate method.
 function checkKey(e) {
 	let key = e.key
 	let regexPattern = /[0-9\.\+\-\*\x\/\=\(\)\c]|Enter|Backspace|Delete/g;
 	if(regexPattern.test(key)) {
-		if(key == 'Enter') key = "="
-		if(key.toLowerCase() == 'x' || key == '*') key = "x"
-		if(key == '/') key = "÷"
-		if(key.toLowerCase() == 'c') key = "Clear"
+		if(key == "Enter") key = "="
+		if(key.toLowerCase() == "x" || key == "*") key = "x"
+		if(key == "/") key = "÷"
+		if(key.toLowerCase() == "c") key = "Clear"
 		if(key == "Backspace" || key == "Delete") key = "⇤"
 
 		if(signOperators.indexOf(key) > -1) appendSignOperator(key)
@@ -96,7 +96,7 @@ function appendSignOperator(operator){
 			if (expCalcRounded == "0") firstInput = true
 
 			// If result contains decimal, prevent another decimal placement.
-			if(expCalcRounded.toString().includes('.')) decimalAllowed = false
+			if(expCalcRounded.toString().includes(".")) decimalAllowed = false
 			else decimalAllowed = true
 
 			// Write result to output
@@ -173,7 +173,7 @@ function appendOperator(operator) {
 
 // Evaluate arithmetic string and return value
 function operate(str) {
-	return Function(`'use strict'; return (${regexParse(str)})`)()
+	return Function(`"use strict"; return (${regexParse(str)})`)()
 }
 
 // Rounds num to n decimal places only if needed. e.g. 4/2=2 2/4=0.5, 5/3=1.667
@@ -206,10 +206,10 @@ function regexParse(str) {
 	
 	// Replace necessary "x", "(", ")" symbols with "*", "*(", ")*" symbols respectivly
 	return strRegex = str
-				.replace(regexMultiplySign, '*')
-				.replace(regexDivideSign, '/')
-				.replace(regexOpeningBracket, '*(')
-				.replace(regexClosingBracket, ')*')
+				.replace(regexMultiplySign, "*")
+				.replace(regexDivideSign, "/")
+				.replace(regexOpeningBracket, "*(")
+				.replace(regexClosingBracket, ")*")
 }
 
 // removes last character from output
@@ -220,16 +220,16 @@ function back() {
 	if (matchNthChar(-1, ".")) decimalAllowed = true
 	// Remove last element from output
 	outputID.textContent = outputID.textContent.slice(0, -1)
-	// If result of backspace still includes '.' prevent decimal
-	if(outputID.textContent.includes('.')) decimalAllowed = false
+	// If result of backspace still includes "." prevent decimal
+	if(outputID.textContent.includes(".")) decimalAllowed = false
 
 	if (outputID.textContent == "") {
 		// When backspacing see if previous output is not empty
 		if (prevOutputID.textContent != "") {
 			// Split previous expressions on newline, pop last expression, then rejoin. Display last expression in current output.
-			let lastPrevOutputArray = prevOutputID.textContent.split('\n')
+			let lastPrevOutputArray = prevOutputID.textContent.split("\n")
 			let lastExp = lastPrevOutputArray.pop()
-			prevOutputID.textContent = lastPrevOutputArray.join('\n')
+			prevOutputID.textContent = lastPrevOutputArray.join("\n")
 			outputID.textContent = lastExp
 			updateScroll()
 		}
