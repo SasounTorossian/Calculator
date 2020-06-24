@@ -38,24 +38,22 @@ window.addEventListener('keydown', checkKey, false)
 function checkKey(e) {
 
 	let key = e.key
-	
-	let keyRegex = /^[0-9\.\*\/\-\+x\=c]|Enter|Backspace|Delete/i;
-	if(keyRegex.test(key)) {
-		console.log(key)
-		if (key == 'Enter' || key == '=' || key == "+" || key == "-" || key == "*" || key == "/") {
-			if(key == 'Enter') key = "="
-			if(key == "*" || key == "x") key = "x"
+	let regexPattern = /[0-9\.\+\-\*\x\/\=\(\)\c]|Enter|Backspace|Delete/g;
+	if(regexPattern.test(key)) {
+		if(key == 'Enter') key = "="
+		if(key == "*" || key == "x") key = "x"
+		if(key == 'c' ) key = "Clear"
+		if(key == "Backspace" || key == "Delete") key = "Back"
+
+		if (key == '=' || key == "+" || key == "-" || key == "x" || key == "/") {
 			console.log("appendSignOperator")
 			appendSignOperator(key)
 		}
-		else if (key == 'c' || key == "Backspace" || key == "Delete") {
-			
-			if(key == 'c') key = "Clear"
-			if(key == "Backspace" || key == "Delete") key = "Back"
+		else if (key == 'Clear' || key == "Back" || key == "Delete") {
 			console.log("appendOperator")
 			appendOperator(key)
 		}
-		else {
+		else{
 			console.log("appendOperand")
 			appendOperand(key)
 		}
@@ -64,8 +62,7 @@ function checkKey(e) {
 	}
 }
 
-function appendOperand(e) {
-	let operand = e
+function appendOperand(operand) {
 
 	if (outputID.textContent == "") {
 		outputID.textContent = "0"
@@ -99,57 +96,57 @@ function appendOperand(e) {
 	this.blur(); // Removes focus from buttons
 }
 
-function appendSignOperator(e){
-let operator = e
+function appendSignOperator(operator){
 
-switch (operator) {
-	case "=":
-		// Get expression as string from output text box
-		const exp = outputID.textContent
-		// Calc value based off string
-		let expCalc = operate(exp)
-		// Round value to 3 decimal places if needed
-		let expCalcRounded = roundToN(expCalc, 3)
+	switch (operator) {
+		case "=":
+			// Get expression as string from output text box
+			const exp = outputID.textContent
+			// Calc value based off string
+			let expCalc = operate(exp)
+			// Round value to 3 decimal places if needed
+			let expCalcRounded = roundToN(expCalc, 3)
 
-		// If rounding truncates decimal value to zero (hence removing decimal) e.g. 0.00002 x 2 = 0, then allow decimals to be used again. 
-		if (!Number.isInteger(expCalc) && 
-			Number.isInteger(expCalcRounded)) {
-				decimalAllowed = true
+			// If rounding truncates decimal value to zero (hence removing decimal) e.g. 0.00002 x 2 = 0, then allow decimals to be used again.
+			if (!Number.isInteger(expCalc) && 
+				Number.isInteger(expCalcRounded)) {
+					decimalAllowed = true
+				}
+
+			// If divided by zero, send message to user
+			if (!isFinite(expCalcRounded)) {
+				outputID.textContent = errorMessage
+				firstInput = true
+				return
+			}			
+			//If zero, treat result as first input
+			if (expCalcRounded == "0") firstInput = true
+			// If result contains decimal, prevent another decimal placement.
+			if(expCalcRounded.toString().includes('.')) decimalAllowed = false
+
+			outputID.textContent = expCalcRounded
+			
+			return
+
+		case "-":
+			// Allow minus sign to function as negative sign if last characters are not already sign operators
+			if(matchPreviousCharacters(-2, signOperators) ||
+				matchPreviousCharacters(-1, "-")) {
+				return
 			}
+			if (firstInput) outputID.textContent = operator
+			else outputID.textContent += operator
+			break 
 
-		// If divided by zero, send message to user
-		if (!isFinite(expCalcRounded)) {
-			outputID.textContent = errorMessage
-			firstInput = true
-			return
+		default:
+			// If previous character is open bracket or sign operator, then do not accept sign input. Prevents scenarios such as 27(*5) and 8*/2
+			if (matchPreviousCharacters(-1, "(", signOperators) || 
+				(firstInput && outputID.textContent == errorMessage)) {
+				return
+			}
+			outputID.textContent += operator
+			break
 		}
-								
-		//If zero, treat result as first input
-		if (expCalcRounded == "0") firstInput = true
-
-		outputID.textContent = expCalcRounded
-		return
-
-	case "-":
-		// Allow minus sign to function as negative sign if last characters are not already sign operators
-		// console.log()
-		if(matchPreviousCharacters(-2, signOperators) ||
-			matchPreviousCharacters(-1, "-")) {
-			return
-		}
-		if (firstInput) outputID.textContent = operator
-		else outputID.textContent += operator
-		break 
-
-	default:
-		// If previous character is open bracket or sign operator, then do not accept sign input. Prevents scenarios such as 27(*5) and 8*/2
-		if (matchPreviousCharacters(-1, "(", signOperators) || 
-			(firstInput && outputID.textContent == errorMessage)) {
-			return
-		}
-		outputID.textContent += operator
-		break
-	}
 
 	firstInput = false
 	decimalAllowed = true
@@ -157,49 +154,46 @@ switch (operator) {
 }
 
 	
-function appendOperator(e) {
-let operator = e
+function appendOperator(operator) {
+	switch (operator) {
+		case "Back":
+			// If back, remove last element from output. Keeps track of opened brackets if there are any.
+			if (matchPreviousCharacters(-1, ")")) openedBrackets++
+			if (matchPreviousCharacters(-1, "(")) openedBrackets--
+			if (matchPreviousCharacters(-1, ".")) decimalAllowed = true
+			outputID.textContent = outputID.textContent.slice(0, -1)
+			break
 
-switch (operator) {
-	case "Back":
-		// If back, remove last element from output. Keeps track of opened brackets if there are any.
-		if (matchPreviousCharacters(-1, ")")) openedBrackets++
-		if (matchPreviousCharacters(-1, "(")) openedBrackets--
-		if (matchPreviousCharacters(-1, ".")) decimalAllowed = true
-		outputID.textContent = outputID.textContent.slice(0, -1)
-		break
-
-	case "Clear":
-		// If clear, erase display and allow decimals to be used
-		outputID.textContent = "0"
-		firstInput = true
-		decimalAllowed = true
-		openedBrackets = 0
-		return
-
-	case "(":
-		// If open bracket, increment bracket counter
-		if (firstInput) outputID.textContent = operator
-		else outputID.textContent += operator
-		openedBrackets++
-		break
-
-	case ")":
-		// If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
-		if (!openedBrackets || matchPreviousCharacters(-1, "(", signOperators) || 
-			matchPreviousCharacters(-2, "(", ".")) {
+		case "Clear":
+			// If clear, erase display and allow decimals to be used
+			outputID.textContent = "0"
+			firstInput = true
+			decimalAllowed = true
+			openedBrackets = 0
 			return
-		}                 
-		outputID.textContent += operator
-		openedBrackets--
-		break
 
-	default:
-		break
-}
+		case "(":
+			// If open bracket, increment bracket counter
+			if (firstInput) outputID.textContent = operator
+			else outputID.textContent += operator
+			openedBrackets++
+			break
 
-firstInput = false
-this.blur(); // Removes focus from buttons
+		case ")":
+			// If close bracket, make sure open bracket, sign operator or open bracket/decimal does not immediately preceed it. Avoids scenarios like "()", "45+(2+)", and "(.)"
+			if (!openedBrackets || matchPreviousCharacters(-1, "(", signOperators) || matchPreviousCharacters(-2, "(", ".")) {
+				return
+			}                 
+			outputID.textContent += operator
+			openedBrackets--
+			break
+
+		default:
+			break
+	}
+
+	firstInput = false
+	this.blur(); // Removes focus from buttons
 }
 
 
