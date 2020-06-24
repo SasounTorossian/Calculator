@@ -14,7 +14,7 @@ const operators = [...document.querySelectorAll(".operator")].map(operator => op
 // Create a list of operands for use in function comparisons  
 const operands = [...document.querySelectorAll(".operand")].map(operand => operand.value)
 
-let prevOutputID = document.getElementById("previousOutput") // Output handle
+let prevOutputID = document.getElementById("previousOutput") // Previous Output handle
 prevOutputID.textContent = ""
 
 let outputID = document.getElementById("displayOutput") // Output handle
@@ -43,6 +43,7 @@ let operatorContainer = document.querySelectorAll(".operator")
 // Keyboard event handler
 window.addEventListener('keydown', checkKey, false)
 
+// Parses keystrokes against a regex pattern. Makes appropriate substitutions and calls the appropriate method.
 function checkKey(e) {
 	let key = e.key
 	let regexPattern = /[0-9\.\+\-\*\x\/\=\(\)\c]|Enter|Backspace|Delete/g;
@@ -76,7 +77,6 @@ function appendOperand(operand) {
 	}
 	
 	firstInput = false 
-	this.blur(); // Removes focus from buttons
 }
 
 function appendSignOperator(operator){
@@ -136,7 +136,6 @@ function appendSignOperator(operator){
 
 	firstInput = false
 	decimalAllowed = true
-	this.blur(); // Removes focus from buttons
 }
 
 	
@@ -175,7 +174,6 @@ function appendOperator(operator) {
 	}
 
 	firstInput = false
-	this.blur(); // Removes focus from buttons
 }
 
 // Evaluate arithmetic string and return value
