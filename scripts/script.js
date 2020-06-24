@@ -14,8 +14,13 @@ const operators = [...document.querySelectorAll(".operator")].map(operator => op
 // Create a list of operands for use in function comparisons  
 const operands = [...document.querySelectorAll(".operand")].map(operand => operand.value)
 
+let prevOutputID = document.getElementById("previousOutput") // Output handle
+prevOutputID.textContent = ""
+
 let outputID = document.getElementById("displayOutput") // Output handle
 outputID.textContent = "0"
+
+
 
 // Click event handler for numeric operands 0-9 and "."
 let operandContainer = document.querySelectorAll(".operand")
@@ -79,6 +84,8 @@ function appendSignOperator(operator){
 		case "=":
 			// Get expression as string from output text box
 			const exp = outputID.textContent
+			prevOutputID.textContent = exp
+			
 			// Calc value based off string
 			let expCalc = operate(exp)
 			// Round value to 3 decimal places if needed
@@ -216,14 +223,21 @@ function back() {
 	if(outputID.textContent.includes('.')) decimalAllowed = false
 	// If backspacing results in cleared screen, create default 0 and set to first input.
 	if (outputID.textContent == "") {
-		outputID.textContent = "0"
-		firstInput = true
+		if (prevOutputID.textContent != "") {
+			outputID.textContent = prevOutputID.textContent
+			prevOutputID.textContent = ""
+		}
+		else {
+			outputID.textContent = "0"
+			firstInput = true
+		}
 	}
 }
 
 // erase display and reset calculator.
 function clear() {
 	outputID.textContent = "0"
+	prevOutputID.textContent = ""
 	firstInput = true
 	decimalAllowed = true
 	openedBrackets = 0
