@@ -186,6 +186,20 @@ body {
     font-size: 25px;
 }
 
+.error{
+    animation-name: errorAnimation;
+    animation-duration: 0.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: 1;    
+    animation-play-state: running;
+}
+
+@keyframes errorAnimation {
+    0%  {background-color: rgba(0, 0, 0, 0.25);}
+    50% {background-color: rgba(0, 0, 0, 0.30);}
+    100%  {background-color: rgba(0, 0, 0, 0.25);}
+}
+
 @media (max-height: 900px) {
     body {
         grid-template-rows: 1fr 20%;

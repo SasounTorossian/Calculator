@@ -55,12 +55,13 @@ function checkKey(e) {
 }
 
 function appendOperand(operand) {
-	if (operand == "." && !decimalAllowed) return
-	if (operand == "0" && firstInput) return
+	if (operand == "." && !decimalAllowed) return animateError()
+	if (operand == "0" && firstInput) return animateError()
 
 	// If previous character is 0 and preceding character is a sign operator or empty space, do not accept any more zeros. Prevents scenarios like 1+002
 	if (matchNthChar(-1, "0") && 
 		(matchNthChar(-2, signOperators) || matchNthChar(-2, "")))  {
+			if (operand == "0") return animateError()
 			if (operand == ".") decimalAllowed = false
 			else outputID.textContent = outputID.textContent.slice(0, -1)
 			outputID.textContent += operand
@@ -79,7 +80,6 @@ function appendSignOperator(operator){
 		case "=":
 			// Get expression as string from output text box
 			const exp = outputID.textContent
-			
 			// Calc value based off string
 			let expCalc = operate(exp)
 			// Round value to 3 decimal places if needed
@@ -89,7 +89,7 @@ function appendSignOperator(operator){
 			if (!isFinite(expCalcRounded)) {
 				outputID.textContent = errorMessage
 				firstInput = true
-				return
+				return animateError()
 			}
 
 			//If result is zero, treat result as first input
@@ -112,7 +112,7 @@ function appendSignOperator(operator){
 			// Allow minus sign to function as negative sign if last characters are not already sign operators
 			if(matchNthChar(-1, "-") ||
 				(matchNthChar(-2, signOperators) && matchNthChar(-1, 			signOperators))) {
-				return
+				return animateError()
 			}
 			if (firstInput) outputID.textContent = operator
 			else outputID.textContent += operator
@@ -123,7 +123,7 @@ function appendSignOperator(operator){
 			if(matchNthChar(-1, "(") || 
 				matchNthChar(-1, signOperators) || 
 				(firstInput && outputID.textContent == errorMessage)) {
-				return
+				return animateError()
 			}
 			outputID.textContent += operator
 			break
@@ -157,7 +157,7 @@ function appendOperator(operator) {
 				matchNthChar(-1, "(")|| 
 				matchNthChar(-1, signOperators) ||
 				(matchNthChar(-2, "(") && matchNthChar(-1, "."))) {
-					return
+					return animateError()
 				}
 
 			outputID.textContent += operator
@@ -252,4 +252,17 @@ function clear() {
 // Updates scroll wheel in previous output to always be at bottom.
 function updateScroll(){
     prevOutputID.scrollTop = prevOutputID.scrollHeight;
+}
+
+// In the event of any error (primarily from operate() function), call the error animation handler.
+window.onerror = () => animateError()
+
+// Adds an error animation class to the display. Works by initially removing the error class, triggering a reflow by taking a measurement of the offset height, then re-adding the error class.
+function animateError() {
+	let outputElem = document.querySelectorAll(".output")
+	outputElem.forEach(elem => {
+		elem.classList.remove("error")
+		elem.offsetHeight; /* trigger reflow */
+		elem.classList.add("error")
+	})
 }
