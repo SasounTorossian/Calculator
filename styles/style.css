@@ -209,14 +209,19 @@ body {
         "zero dec equal divide";
     }
 
+    #display #previousOutput {
+        font-size: 1.0rem;
+    }
+    
+    #display #displayOutput {
+        font-size: 2.0rem;
+    }
+
     .operand, 
     .signOperator, 
     .operator{
         font-size: 25px;
         font-weight: 600;
-        cursor: pointer;
-        outline: none;
-        border: none
     }
 
     #Back {
