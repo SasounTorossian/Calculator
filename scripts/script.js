@@ -138,7 +138,7 @@ function appendOperator(operator) {
 	switch (operator) {
 		case "⇤":
 			back()
-			break
+			return
 
 		case "Clear":
 			clear()
