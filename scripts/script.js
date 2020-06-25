@@ -30,7 +30,7 @@ keyboardContainer.forEach(keyboard => {
 		else if (operators.indexOf(key) > -1) appendOperator(key)
 		else if (operands.indexOf(key) > -1)appendOperand(key)
 		else return
-		firstInput = false
+		if(key != "⇤" && key != "Clear") firstInput = false
 	})
 })
 
@@ -52,7 +52,7 @@ function checkKey(e) {
 		else if (operators.indexOf(key) > -1) appendOperator(key)
 		else if (operands.indexOf(key) > -1)appendOperand(key)
 		else return
-		firstInput = false
+		if(key != "⇤" && key != "Clear") firstInput = false
 	}
 }
 
