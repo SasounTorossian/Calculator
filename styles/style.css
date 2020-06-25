@@ -17,8 +17,8 @@ body {
     display: grid;
     padding: 0%;
     margin: 0%;
-    min-height: 100%;
-    grid-template-rows: 1fr 150px;
+    min-height: 100vh;
+    grid-template-rows: 1fr 20%;
     grid-template-areas: 
     "keypad"
     "footer";
@@ -184,4 +184,42 @@ body {
     margin-top: 15px;
     font-weight: 500;
     font-size: 25px;
+}
+
+@media (max-height: 900px) {
+    body {
+        grid-template-rows: 1fr 20%;
+        grid-template-areas: 
+        "keypad"
+        "footer";
+    }
+
+    #calculator {
+        margin: auto;
+        display: grid;
+        grid-template-rows: repeat(7, 80px);
+        grid-template-columns: repeat(4, 80px);
+        grid-template-areas: 
+        "previousOutput previousOutput previousOutput previousOutput"
+        "displayOutput displayOutput displayOutput displayOutput"
+        "openBracket closeBracket Back Clear"
+        "seven eight nine add"
+        "four five six subtract"
+        "one two three multiply"
+        "zero dec equal divide";
+    }
+
+    .operand, 
+    .signOperator, 
+    .operator{
+        font-size: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+        border: none
+    }
+
+    #Back {
+        font-size: 33px;
+    }
 }
