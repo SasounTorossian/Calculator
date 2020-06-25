@@ -30,6 +30,7 @@ keyboardContainer.forEach(keyboard => {
 		else if (operators.indexOf(key) > -1) appendOperator(key)
 		else if (operands.indexOf(key) > -1)appendOperand(key)
 		else return
+		firstInput = false
 	})
 })
 
@@ -51,6 +52,7 @@ function checkKey(e) {
 		else if (operators.indexOf(key) > -1) appendOperator(key)
 		else if (operands.indexOf(key) > -1)appendOperand(key)
 		else return
+		firstInput = false
 	}
 }
 
@@ -71,8 +73,6 @@ function appendOperand(operand) {
 		if (firstInput) outputID.textContent = operand
 		else outputID.textContent += operand
 	}
-	
-	firstInput = false 
 }
 
 function appendSignOperator(operator){
@@ -106,7 +106,7 @@ function appendSignOperator(operator){
 			prevOutputID.innerHTML += "&#10;"
 			prevOutputID.textContent += exp
 			updateScroll()
-			return
+			break
 
 		case "-":
 			// Allow minus sign to function as negative sign if last characters are not already sign operators
@@ -116,6 +116,7 @@ function appendSignOperator(operator){
 			}
 			if (firstInput) outputID.textContent = operator
 			else outputID.textContent += operator
+			decimalAllowed = true
 			break 
 
 		default:
@@ -126,11 +127,9 @@ function appendSignOperator(operator){
 				return animateError()
 			}
 			outputID.textContent += operator
+			decimalAllowed = true
 			break
 		}
-
-	firstInput = false
-	decimalAllowed = true
 }
 
 	
@@ -138,11 +137,11 @@ function appendOperator(operator) {
 	switch (operator) {
 		case "⇤":
 			back()
-			return
+			break
 
 		case "Clear":
 			clear()
-			return
+			break
 
 		case "(":
 			// If open bracket, increment bracket counter
@@ -167,8 +166,6 @@ function appendOperator(operator) {
 		default:
 			break
 	}
-
-	firstInput = false
 }
 
 // Evaluate arithmetic string and return value
