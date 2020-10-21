@@ -11,7 +11,7 @@ Rest of code is to deal with edge cases, such as:
 * Interpret subtraction as negative sign if preceded by non-subtraction operator (3+-2 = 1)
 * Prevent double non-negative operator (++)
 * Prevent three operators in a row (xxx or +--)
-* Deal with multiple zeros to allow 1.001, but **not** allow 002.1
+* Deal with multiple zeros to allow 1.001 and 1.100, but **not** allow 001.1
 * Prevent double decimal (..)
 * Implement open bracket counter to make sure all brackets are closed
 
