@@ -14,14 +14,11 @@ html {
 body {
     background: white;
     background: linear-gradient(135deg, rgba(255,255,255,1) 5%, rgba(164,164,184,1) 50%, rgba(38,139,159,1) 100%);
-    display: grid;
+    display: flex;
+    flex-direction: column;
     padding: 0%;
     margin: 0%;
-    min-height: 100vh;
-    grid-template-rows: 1fr 20%;
-    grid-template-areas: 
-    "keypad"
-    "footer";
+    min-height: 100%;
 }
 
 #keypad {
@@ -174,7 +171,8 @@ body {
 }
 
 /* FOOTER */ 
-#footer {
+#footer {  
+    flex: 0.2;
     display: inline-flex;
     text-align: center;
     margin: 0 auto;
