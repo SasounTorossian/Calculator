@@ -1,7 +1,7 @@
 # Calculator
 A calculator project, based off the Odin project curriculum. Performs basic calculator tasks of addition, subtraction, multiplication, and division. Also includes bracket functionality, as well as keyboard compatibility. Live demo can be found on github.io [here](https://sasountorossian.github.io/Calculator/). 
 
-![Calculator demonstration](Calculator.gif)
+![Calculator demonstration]()
 
 Calculator operates by accepting input either via button press or keyboard. Input is parsed into 3 catagories, operands (0-9, .), sign operators(=, +, -, x, /), and functionality operators(⇤, clear, (, )). Depending on the input, different functions would be called to pre-process the data, and then append to the screen.
 
